@@ -45,6 +45,13 @@ async function run() {
             const data = await usersCollection.find(query).toArray();
             res.send(data);
         })
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        })
+
         app.get('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
             const query = { email };
@@ -71,12 +78,12 @@ async function run() {
             res.send(result);
         })
         app.put('/users/admin/:id', async (req, res) => {
-            const decodedEmail = req.decoded?.email;
-            const query = { email: decodedEmail }
-            const user = await usersCollection.findOne(query);
-            if (user?.role !== 'admin') {
-                return res.status(403).send({ message: 'Forbidden Access' })
-            }
+            // const decodedEmail = req.decoded?.email;
+            // const query = { email: decodedEmail }
+            // const user = await usersCollection.findOne(query);
+            // if (user?.role !== 'admin') {
+            //     return res.status(403).send({ message: 'Forbidden Access' })
+            // }
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true }
@@ -87,7 +94,6 @@ async function run() {
             }
             const result = await usersCollection.updateOne(filter, updatedDoc, options)
             res.send(result);
-
         })
 
     }
